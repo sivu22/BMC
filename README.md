@@ -3,6 +3,10 @@ BMW Media Converter converts files created by the BMW iDrive entertainment syste
 
 Download latest version [here](/Build/). Tested it with an (NBT Evo) ID4 headunit.
 
+<img src="/Screenshot.png">
+
+Interested in converting a different BR* file format? Please send me the file to add it to the list of supported file types!
+
 ## License
 BMC is licensed under the MIT license.
 
