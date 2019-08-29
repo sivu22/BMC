@@ -1,0 +1,93 @@
+﻿<Window x:Class="BMC.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BMC"
+        mc:Ignorable="d"
+        Title="BMW Media Converter - Freude am Konvertieren" Height="520" Width="600" MinWidth="600" MinHeight="490" WindowStartupLocation="CenterScreen">
+
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Open" CanExecute="OpenCommandCanExecute" Executed="OpenCommandExecuted"/>
+    </Window.CommandBindings>
+    
+    <Window.Resources>
+        <Style x:Key="textBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="23" />
+            <Setter Property="Margin" Value="0,0,10,10" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+
+        <local:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
+    </Window.Resources>
+    
+    <Grid Margin="20,10,20,20" ShowGridLines="False">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="Source folder" Grid.Row="0" Style="{StaticResource labelStyle}"/>
+        <TextBox Name="sourceTextBox" Grid.Row="1" Grid.Column="0" Style="{StaticResource textBoxStyle}" Text="{Binding Model.SourcePath, UpdateSourceTrigger=PropertyChanged}"
+                 IsEnabled="{Binding Model.NotConverting}"/>
+        <CheckBox Content="Include subfolders" HorizontalAlignment="Left" Margin="0,0,0,10" Grid.Row="2" VerticalAlignment="Top" IsChecked="{Binding Model.Subfolders}"
+                  IsEnabled="{Binding Model.NotConverting}"/>
+        <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource transpImageButtonStyle}" Width="23" Height="23" BorderThickness="0" IsEnabled="{Binding Model.NotConverting}"
+                Command="Open" Name="sourceButton">
+            <Image Source="{StaticResource OpenFolderImage}" Stretch="Fill"/>
+        </Button>
+
+        <Label Content="Output folder" Grid.Row="3" Style="{StaticResource labelStyle}"/>
+        <TextBox Name="outputTextBox" Grid.Row="4" Grid.Column="0" Style="{StaticResource textBoxStyle}" Text="{Binding Model.OutputPath, UpdateSourceTrigger=PropertyChanged}"
+                 IsEnabled="{Binding Model.OutputEnabled}"/>
+        <CheckBox Content="Place converted file next to the source" HorizontalAlignment="Left" Margin="0,0,0,10" Grid.Row="5" VerticalAlignment="Top" IsChecked="{Binding Model.NextToSource}"
+                  IsEnabled="{Binding Model.NotConverting}"/>
+        <Button Grid.Row="4" Grid.Column="1" Style="{StaticResource transpImageButtonStyle}" Width="23" Height="23" BorderThickness="0" IsEnabled="{Binding Model.OutputEnabled}"
+                Command="Open" Name="outputButton">
+            <Image Source="{StaticResource OpenFolderImage}" Stretch="Fill"></Image>
+        </Button>
+
+        <ListView Name="filesListView" HorizontalAlignment="Stretch" Margin="0,30,0,30" Grid.Row="6" Grid.ColumnSpan="2" VerticalAlignment="Stretch"
+                  ItemsSource="{Binding Model.ConvertedItems}">
+            <ListView.Resources>
+                <Style TargetType="GridViewColumnHeader">
+                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="File" Width="340" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Type" Width="60" DisplayMemberBinding="{Binding Type}"/>
+                    <GridViewColumn Header="Status" Width="100" DisplayMemberBinding="{Binding Status}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <Grid Margin="0,0,0,10" Grid.Row="7" Grid.ColumnSpan="2">
+            <ProgressBar Name="statusProgressBar" HorizontalAlignment="Stretch" Height="22" Foreground="#FF009ADA"
+                         Visibility="{Binding Model.Converting, Converter={StaticResource BooleanVisibilityConverter}}"
+                         Value="{Binding SortProgress, Mode=OneWay}"/>
+            <TextBlock Name="statusText" Text="{Binding Model.Status}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+
+        <Button Grid.Row="8" Grid.Column="0" Style="{StaticResource transpImageButtonStyle}" Width="24" Height="24" BorderThickness="0" HorizontalAlignment="Left" Click="Button_Click">
+            <Image Source="{StaticResource BMWlogo}" Stretch="Fill"></Image>
+        </Button>
+        
+        <Button Name="convertButton" Content="{Binding Model.RunText}" HorizontalAlignment="Right" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top" 
+                Width="75" Height="20" IsEnabled="{Binding Model.CanConvert}" Command="{Binding ConvertCommand}"/>
+    </Grid>
+</Window>
