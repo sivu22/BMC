@@ -76,43 +76,40 @@ namespace BMC
             ConvertedItems = new ObservableCollection<ConvertedItem>();
         }
 
-        public Task FindMediaFilesAsync(CancellationToken? token = null)
+        public void FindMediaFiles(CancellationToken? token = null)
         {
-            return Task.Run(() =>
+            var items = new List<Item>();
+
+            try
             {
-                var items = new List<Item>();
+                List<string> files;
+                if (Subfolders)
+                    files = Directory.EnumerateFiles(SourcePath, "*.*", SearchOption.AllDirectories).Where(fileName => MediaConverter.SearchFilter(fileName)).ToList();
+                else
+                    files = Directory.EnumerateFiles(SourcePath).Where(fileName => MediaConverter.SearchFilter(fileName)).ToList();
+                token?.ThrowIfCancellationRequested();
 
-                try
+                Item item = new Item();
+                int namePos = 0;
+                foreach (string file in files)
                 {
-                    List<string> files;
-                    if (Subfolders)
-                        files = Directory.EnumerateFiles(SourcePath, "*.*", SearchOption.AllDirectories).Where(fileName => MediaConverter.SearchFilter(fileName)).ToList();
-                    else
-                        files = Directory.EnumerateFiles(SourcePath).Where(fileName => MediaConverter.SearchFilter(fileName)).ToList();
+                    namePos = file.LastIndexOf("\\");
+                    item.FullPath = file;
+                    (item.Name, item.Type) = MediaConverter.GetFileNameAndIDriveType(file.Substring(namePos + 1));
+
+                    if (item.Type != MediaConverter.IDriveType.Unknown) items.Add(item);
                     token?.ThrowIfCancellationRequested();
-
-                    Item item = new Item();
-                    int namePos = 0;
-                    foreach (string file in files)
-                    {
-                        namePos = file.LastIndexOf("\\");
-                        item.FullPath = file;
-                        (item.Name, item.Type) = MediaConverter.GetFileNameAndIDriveType(file.Substring(namePos + 1));
-
-                        if (item.Type != MediaConverter.IDriveType.Unknown) items.Add(item);
-                        token?.ThrowIfCancellationRequested();
-                    }
                 }
-                catch (Exception)
-                {
-                    throw;
-                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
-                Items = items.ToArray();
-                App.Current.Dispatcher.Invoke((Action)delegate
-                {
-                    ConvertedItems.Clear();
-                });
+            Items = items.ToArray();
+            App.Current.Dispatcher.Invoke((Action)delegate
+            {
+                ConvertedItems.Clear();
             });
         }
 
@@ -130,52 +127,49 @@ namespace BMC
             }
         }
 
-        public Task ConvertItem(Item item)
+        public async Task ConvertItemAsync(Item item)
         {
-            return Task.Run(() =>
+            if (item.Type == MediaConverter.IDriveType.Unknown) return;
+
+            var fileName = String.Format("{0}.{1}", item.Name, MediaConverter.GetMediaType(item.Type).ToString().ToLower());
+
+            string newFile = "";
+            if (NextToSource)
             {
-                if (item.Type == MediaConverter.IDriveType.Unknown) return;
+                int namePos = item.FullPath.LastIndexOf("\\");
+                var path = item.FullPath.Substring(0, namePos + 1);
+                newFile = String.Format("{0}{1}", path, fileName);
+            }
+            else newFile = String.Format("{0}\\{1}", OutputPath, fileName);
 
-                var fileName = String.Format("{0}.{1}", item.Name, MediaConverter.GetMediaType(item.Type).ToString().ToLower());
+            var itemConv = new ConvertedItem
+            {
+                Name = fileName,
+                Status = "OK",
+                Type = item.Type.ToString()
+            };
 
-                string newFile = "";
-                if (NextToSource)
+            try
+            {
+                var bytes = File.ReadAllBytes(item.FullPath);
+                var bytesConv = await Task.Run(() => MediaConverter.Convert(bytes, item.Type));
+                File.WriteAllBytes(newFile, bytesConv);
+
+                App.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    int namePos = item.FullPath.LastIndexOf("\\");
-                    var path = item.FullPath.Substring(0, namePos + 1);
-                    newFile = String.Format("{0}{1}", path, fileName);
-                }
-                else newFile = String.Format("{0}\\{1}", OutputPath, fileName);
-
-                var itemConv = new ConvertedItem
+                    ConvertedItems.Add(itemConv);
+                });
+            }
+            catch (Exception e)
+            {
+                itemConv.Status = $"Error: {e.Message}";
+                App.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    Name = fileName,
-                    Status = "OK",
-                    Type = item.Type.ToString()
-                };
+                    ConvertedItems.Add(itemConv);
+                });
 
-                try
-                {
-                    var bytes = File.ReadAllBytes(item.FullPath);
-                    var bytesConv = MediaConverter.Convert(bytes, item.Type);
-                    File.WriteAllBytes(newFile, bytesConv);
-
-                    App.Current.Dispatcher.Invoke((Action)delegate
-                    {
-                        ConvertedItems.Add(itemConv);
-                    });
-                }
-                catch (Exception e)
-                {
-                    itemConv.Status = $"Error: {e.Message}";
-                    App.Current.Dispatcher.Invoke((Action)delegate
-                    {
-                        ConvertedItems.Add(itemConv);
-                    });
-
-                    throw;
-                }
-            });
+                throw;
+            }
         }
     }
 }

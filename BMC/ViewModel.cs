@@ -54,7 +54,7 @@ namespace BMC
 
                 try
                 {
-                    await Model.FindMediaFilesAsync(token);
+                    await Task.Run(() => Model.FindMediaFiles(token));
                 }
                 catch (OperationCanceledException)
                 {
@@ -80,15 +80,14 @@ namespace BMC
                     if (!canceled)
                     {
                         var currentItem = 0;
-                        var progressPercent = 0;
                         foreach (var item in Model.Items)
                         {
                             try
                             {
-                                await Model.ConvertItem(item);
+                                await Task.Run(() => Model.ConvertItemAsync(item));
 
                                 Model.Status = $"{++currentItem}/{Model.Items.Length}";
-                                progressPercent = 100 * currentItem / Model.Items.Length;
+                                int progressPercent = 100 * currentItem / Model.Items.Length;
 
                                 progress?.Report(progressPercent);
                                 token.ThrowIfCancellationRequested();
