@@ -80,30 +80,23 @@ namespace BMC
         {
             var items = new List<Item>();
 
-            try
+            List<string> files;
+            if (Subfolders)
+                files = Directory.EnumerateFiles(SourcePath, "*.*", SearchOption.AllDirectories).Where(fileName => MediaConverter.SearchFilter(fileName)).ToList();
+            else
+                files = Directory.EnumerateFiles(SourcePath).Where(fileName => MediaConverter.SearchFilter(fileName)).ToList();
+            token?.ThrowIfCancellationRequested();
+
+            Item item = new Item();
+            int namePos = 0;
+            foreach (string file in files)
             {
-                List<string> files;
-                if (Subfolders)
-                    files = Directory.EnumerateFiles(SourcePath, "*.*", SearchOption.AllDirectories).Where(fileName => MediaConverter.SearchFilter(fileName)).ToList();
-                else
-                    files = Directory.EnumerateFiles(SourcePath).Where(fileName => MediaConverter.SearchFilter(fileName)).ToList();
+                namePos = file.LastIndexOf("\\");
+                item.FullPath = file;
+                (item.Name, item.Type) = MediaConverter.GetFileNameAndIDriveType(file.Substring(namePos + 1));
+
+                if (item.Type != MediaConverter.IDriveType.Unknown) items.Add(item);
                 token?.ThrowIfCancellationRequested();
-
-                Item item = new Item();
-                int namePos = 0;
-                foreach (string file in files)
-                {
-                    namePos = file.LastIndexOf("\\");
-                    item.FullPath = file;
-                    (item.Name, item.Type) = MediaConverter.GetFileNameAndIDriveType(file.Substring(namePos + 1));
-
-                    if (item.Type != MediaConverter.IDriveType.Unknown) items.Add(item);
-                    token?.ThrowIfCancellationRequested();
-                }
-            }
-            catch (Exception)
-            {
-                throw;
             }
 
             Items = items.ToArray();
@@ -117,14 +110,7 @@ namespace BMC
         {
             if (NextToSource || Directory.Exists(OutputPath)) return;
 
-            try
-            {
-                Directory.CreateDirectory(OutputPath);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            Directory.CreateDirectory(OutputPath);
         }
 
         public async Task ConvertItemAsync(Item item)
