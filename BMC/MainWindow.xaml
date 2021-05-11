@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BMC"
         mc:Ignorable="d"
-        Title="BMW Media Converter - Freude am Konvertieren" Height="520" Width="600" MinWidth="600" MinHeight="490" WindowStartupLocation="CenterScreen">
+        Title="BMW Media Converter - Freude am Konvertieren" Height="580" Width="600" MinWidth="600" MinHeight="550" WindowStartupLocation="CenterScreen">
 
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open" CanExecute="OpenCommandCanExecute" Executed="OpenCommandExecuted"/>
@@ -29,6 +29,8 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -59,8 +61,19 @@
                 Command="Open" Name="outputButton">
             <Image Source="{StaticResource OpenFolderImage}" Stretch="Fill"></Image>
         </Button>
+        
+        <Label Content="iDrive version" Grid.Row="6" Style="{StaticResource labelStyle}"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="7" Grid.Column="0" Margin="0,0,10,0">
+            <ComboBox Name="iDriveComboBox" Width="105" SelectedIndex="{Binding Model.HUIndex}" IsEnabled="{Binding Model.NotConverting}">
+                <ComboBoxItem Content="CIC"/>
+                <ComboBoxItem Content="NBT/NBT Evo"/>
+            </ComboBox>
+            <TextBlock VerticalAlignment="Center" Margin="10,0,0,0">
+                <Hyperlink NavigateUri="https://www.bimmer-tech.net/blog/item/54-bmw-cic-nbt-nbtevo" RequestNavigate="RequestNavigate"> Which iDrive do I have? </Hyperlink>
+            </TextBlock>
+        </StackPanel>
 
-        <ListView Name="filesListView" HorizontalAlignment="Stretch" Margin="0,30,0,30" Grid.Row="6" Grid.ColumnSpan="2" VerticalAlignment="Stretch"
+        <ListView Name="filesListView" HorizontalAlignment="Stretch" Margin="0,30,0,30" Grid.Row="8" Grid.ColumnSpan="2" VerticalAlignment="Stretch"
                   ItemsSource="{Binding Model.ConvertedItems}">
             <ListView.Resources>
                 <Style TargetType="GridViewColumnHeader">
@@ -76,18 +89,18 @@
             </ListView.View>
         </ListView>
 
-        <Grid Margin="0,0,0,10" Grid.Row="7" Grid.ColumnSpan="2">
+        <Grid Margin="0,0,0,10" Grid.Row="9" Grid.ColumnSpan="2">
             <ProgressBar Name="statusProgressBar" HorizontalAlignment="Stretch" Height="22" Foreground="#FF009ADA"
                          Visibility="{Binding Model.Converting, Converter={StaticResource BooleanVisibilityConverter}}"
                          Value="{Binding SortProgress, Mode=OneWay}"/>
             <TextBlock Name="statusText" Text="{Binding Model.Status}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
 
-        <Button Grid.Row="8" Grid.Column="0" Style="{StaticResource transpImageButtonStyle}" Width="24" Height="24" BorderThickness="0" HorizontalAlignment="Left" Click="Button_Click">
+        <Button Grid.Row="10" Grid.Column="0" Style="{StaticResource transpImageButtonStyle}" Width="24" Height="24" BorderThickness="0" HorizontalAlignment="Left" Click="Button_Click">
             <Image Source="{StaticResource BMWlogo}" Stretch="Fill"></Image>
         </Button>
         
-        <Button Name="convertButton" Content="{Binding Model.RunText}" HorizontalAlignment="Right" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top" 
+        <Button Name="convertButton" Content="{Binding Model.RunText}" HorizontalAlignment="Right" Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top" 
                 Width="75" Height="20" IsEnabled="{Binding Model.CanConvert}" Command="{Binding ConvertCommand}"/>
     </Grid>
 </Window>

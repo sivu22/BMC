@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Navigation;
 
 namespace BMC
 {
@@ -44,6 +45,12 @@ namespace BMC
             }
         }
 
+        private void RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
+        }
+        
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Process.Start("https://github.com/sivu22/BMC");

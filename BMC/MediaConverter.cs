@@ -7,6 +7,7 @@ namespace BMC
         public enum IDriveType
         {
             Unknown = 0,
+            BR1,
             BR25,
             BR27,
             BR28,
@@ -15,6 +16,7 @@ namespace BMC
             BR34,
             BR48,
             BR4,
+            BR5,
             BR67
         }
 
@@ -30,13 +32,20 @@ namespace BMC
             FLAC
         }
 
+        public enum HeadUnit
+        {
+            CIC = 0,
+            NBT
+        }
+
         public static readonly Predicate<string> SearchFilter = IsMediaFile;
 
         private static bool IsMediaFile(string fileName)
         {
-            return fileName.ToLower().EndsWith(".br25") || fileName.ToLower().EndsWith(".br27") || fileName.ToLower().EndsWith(".br28") 
-                || fileName.ToLower().EndsWith(".br29") || fileName.ToLower().EndsWith(".br30") || fileName.ToLower().EndsWith(".br34")
-                || fileName.ToLower().EndsWith(".br48") || fileName.ToLower().EndsWith(".br4") || fileName.ToLower().EndsWith(".br67");
+            return fileName.ToLower().EndsWith(".br1") || fileName.ToLower().EndsWith(".br25") || fileName.ToLower().EndsWith(".br27") 
+                || fileName.ToLower().EndsWith(".br28") || fileName.ToLower().EndsWith(".br29") || fileName.ToLower().EndsWith(".br30") 
+                || fileName.ToLower().EndsWith(".br34") || fileName.ToLower().EndsWith(".br48") || fileName.ToLower().EndsWith(".br4")
+                || fileName.ToLower().EndsWith(".br5") || fileName.ToLower().EndsWith(".br67");
         }
 
         public static (string, IDriveType) GetFileNameAndIDriveType(string fileName)
@@ -51,6 +60,9 @@ namespace BMC
             // No Parse
             switch (ext)
             {
+                case "br1":
+                    return (name, IDriveType.BR1);
+                
                 case "br25":
                     return (name, IDriveType.BR25);
 
@@ -75,6 +87,9 @@ namespace BMC
                 case "br4":
                     return (name, IDriveType.BR4);
 
+                case "br5":
+                    return (name, IDriveType.BR5);
+
                 case "br67":
                     return (name, IDriveType.BR67);
 
@@ -87,6 +102,7 @@ namespace BMC
         {
             switch (iDriveType)
             {
+                case IDriveType.BR1:
                 case IDriveType.BR25:
                     return MediaType.AAC;
 
@@ -99,6 +115,7 @@ namespace BMC
                     return MediaType.MP3;
 
                 case IDriveType.BR29:
+                case IDriveType.BR5:
                     return MediaType.WMA;
 
                 case IDriveType.BR30:
@@ -115,7 +132,7 @@ namespace BMC
             }
         }
 
-        public static byte[] Convert(byte[] bytesIn, IDriveType type)
+        public static byte[] Convert(byte[] bytesIn, IDriveType type, HeadUnit hu)
         {
             if (bytesIn.Length < 1) return new byte[] { };
 
@@ -132,7 +149,9 @@ namespace BMC
                 else if (type == IDriveType.BR25 || type == IDriveType.BR4)
                 {
                     if (bytesIn.Length - i > 3) bytesOut[i] = (byte)(~bytesIn[i]);
-                    else bytesOut[i] = bytesIn[i];
+                    else if (hu != HeadUnit.CIC) bytesOut[i] = bytesIn[i];
+                    // Not for CIC
+                    else bytesOut[i] = (byte)(~bytesIn[i]);
                 }
                 // Last byte is not inverted
                 else if (type == IDriveType.BR28 || type == IDriveType.BR30)

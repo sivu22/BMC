@@ -34,6 +34,7 @@ namespace BMC
             public const bool Subfolders = false;
             public static readonly string OutputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
             public const bool NextToSource = false;
+            public const int HUIndex = (int)MediaConverter.HeadUnit.NBT;
         }
 
         private readonly string[] convertDep = new string[] { nameof(CanConvert) };
@@ -49,6 +50,9 @@ namespace BMC
 
         private bool nextToSource = Defaults.NextToSource;
         public bool NextToSource { get => nextToSource; set => ChangeProperty(ref nextToSource, value, new string[] { nameof(OutputEnabled) }); }
+
+        private int huIndex = Defaults.HUIndex;
+        public int HUIndex { get => huIndex; set => ChangeProperty(ref huIndex, value); }
 
 
         public bool CanConvert { get => !string.IsNullOrEmpty(SourcePath) && !string.IsNullOrEmpty(OutputPath); }
@@ -138,7 +142,7 @@ namespace BMC
             try
             {
                 var bytes = File.ReadAllBytes(item.FullPath);
-                var bytesConv = await Task.Run(() => MediaConverter.Convert(bytes, item.Type));
+                var bytesConv = await Task.Run(() => MediaConverter.Convert(bytes, item.Type, (MediaConverter.HeadUnit)huIndex));
                 File.WriteAllBytes(newFile, bytesConv);
 
                 App.Current.Dispatcher.Invoke((Action)delegate
