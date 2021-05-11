@@ -96,9 +96,9 @@
             <TextBlock Name="statusText" Text="{Binding Model.Status}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
 
-        <Button Grid.Row="10" Grid.Column="0" Style="{StaticResource transpImageButtonStyle}" Width="24" Height="24" BorderThickness="0" HorizontalAlignment="Left" Click="Button_Click">
-            <Image Source="{StaticResource BMWlogo}" Stretch="Fill"></Image>
-        </Button>
+        <TextBlock Grid.Row="10" Grid.Column="0" VerticalAlignment="Center">
+             <Hyperlink NavigateUri="https://github.com/sivu22/BMC" RequestNavigate="RequestNavigate"> About </Hyperlink>
+        </TextBlock>
         
         <Button Name="convertButton" Content="{Binding Model.RunText}" HorizontalAlignment="Right" Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top" 
                 Width="75" Height="20" IsEnabled="{Binding Model.CanConvert}" Command="{Binding ConvertCommand}"/>
