@@ -96,10 +96,15 @@
             <TextBlock Name="statusText" Text="{Binding Model.Status}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
 
-        <TextBlock Grid.Row="10" Grid.Column="0" VerticalAlignment="Center">
-             <Hyperlink NavigateUri="https://github.com/sivu22/BMC" RequestNavigate="RequestNavigate"> About </Hyperlink>
-        </TextBlock>
-        
+        <StackPanel Orientation="Horizontal" Grid.Row="10" Grid.Column="0" HorizontalAlignment="Left">
+            <TextBlock VerticalAlignment="Center">
+                <Hyperlink NavigateUri="https://github.com/sivu22/BMC" RequestNavigate="RequestNavigate"> About </Hyperlink>
+            </TextBlock>
+            <TextBlock VerticalAlignment="Center" Margin="10,0,0,0">
+                <Hyperlink NavigateUri="https://www.paypal.com/donate?hosted_button_id=EN4ET24Q6U5EU" RequestNavigate="RequestNavigate"> Buy me a coffee </Hyperlink>
+            </TextBlock>
+        </StackPanel>
+
         <Button Name="convertButton" Content="{Binding Model.RunText}" HorizontalAlignment="Right" Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top" 
                 Width="75" Height="20" IsEnabled="{Binding Model.CanConvert}" Command="{Binding ConvertCommand}"/>
     </Grid>
