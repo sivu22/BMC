@@ -7,6 +7,11 @@ Download latest version [here](/Build/). This version was tested it with CIC and
 
 Interested in converting a different BR* file format or are you experiencing issues with conversion? Please get in touch with me or send me the BR* file to add it to the list of supported file types!
 
+## Donate
+If you enjoy BMC and find it useful, feel free to show your appreciation with any amount.
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate?hosted_button_id=EN4ET24Q6U5EU)
+
 ## License
 BMC is licensed under the MIT license.
 
