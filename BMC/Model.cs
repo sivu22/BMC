@@ -124,13 +124,18 @@ namespace BMC
             var fileName = String.Format("{0}.{1}", item.Name, MediaConverter.GetMediaType(item.Type).ToString().ToLower());
 
             string newFile = "";
+            string destPath = "";
+            int namePos = item.FullPath.LastIndexOf("\\");
             if (NextToSource)
             {
-                int namePos = item.FullPath.LastIndexOf("\\");
                 var path = item.FullPath.Substring(0, namePos + 1);
                 newFile = String.Format("{0}{1}", path, fileName);
             }
-            else newFile = String.Format("{0}\\{1}", OutputPath, fileName);
+            else
+            {
+                destPath = OutputPath + item.FullPath.Substring(SourcePath.Length, item.FullPath.Length - (item.FullPath.Length - namePos) - SourcePath.Length);
+                newFile = String.Format("{0}\\{1}", destPath, fileName);
+            }
 
             var itemConv = new ConvertedItem
             {
@@ -143,6 +148,7 @@ namespace BMC
             {
                 var bytes = File.ReadAllBytes(item.FullPath);
                 var bytesConv = await Task.Run(() => MediaConverter.Convert(bytes, item.Type, (MediaConverter.HeadUnit)huIndex));
+                Directory.CreateDirectory(destPath);
                 File.WriteAllBytes(newFile, bytesConv);
 
                 App.Current.Dispatcher.Invoke((Action)delegate
