@@ -148,7 +148,10 @@ namespace BMC
             {
                 var bytes = File.ReadAllBytes(item.FullPath);
                 var bytesConv = await Task.Run(() => MediaConverter.Convert(bytes, item.Type, (MediaConverter.HeadUnit)huIndex));
-                Directory.CreateDirectory(destPath);
+                if (!String.IsNullOrEmpty(destPath))
+                {
+                    Directory.CreateDirectory(destPath);
+                }
                 File.WriteAllBytes(newFile, bytesConv);
 
                 App.Current.Dispatcher.Invoke((Action)delegate
