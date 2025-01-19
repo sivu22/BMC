@@ -1,5 +1,5 @@
 # BMC
-BMW Media Converter converts files created by the BMW iDrive entertainment system back to their original format. More specifically, br1, br25, br27, br28, br29, br30, br34, br48, br4, br5 and br67 files will be converted into aac, flac, jpg, m3u, mp3, mp4, and wma.
+BMW Media Converter converts files created by the BMW iDrive entertainment system back to their original format. More specifically, br1, br25, br27, br28, br29, br3, br30, br34, br48, br4, br5 and br67 files will be converted into aac, flac, jpg, m3u, m4a, mp3, mp4, and wma.
 
 Download the latest version [here](/Build/). This version was tested with CIC and NBT Evo ID4 headunits.
 

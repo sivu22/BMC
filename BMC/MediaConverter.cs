@@ -12,6 +12,7 @@ namespace BMC
             BR27,
             BR28,
             BR29,
+            BR3,
             BR30,
             BR34,
             BR48,
@@ -24,6 +25,7 @@ namespace BMC
         {
             Unknown = 0,
             AAC,
+            M4A,
             MP3,
             MP4,
             WMA,
@@ -43,9 +45,9 @@ namespace BMC
         private static bool IsMediaFile(string fileName)
         {
             return fileName.ToLower().EndsWith(".br1") || fileName.ToLower().EndsWith(".br25") || fileName.ToLower().EndsWith(".br27") 
-                || fileName.ToLower().EndsWith(".br28") || fileName.ToLower().EndsWith(".br29") || fileName.ToLower().EndsWith(".br30") 
-                || fileName.ToLower().EndsWith(".br34") || fileName.ToLower().EndsWith(".br48") || fileName.ToLower().EndsWith(".br4")
-                || fileName.ToLower().EndsWith(".br5") || fileName.ToLower().EndsWith(".br67");
+                || fileName.ToLower().EndsWith(".br28") || fileName.ToLower().EndsWith(".br29") || fileName.ToLower().EndsWith(".br3")
+                || fileName.ToLower().EndsWith(".br30") || fileName.ToLower().EndsWith(".br34") || fileName.ToLower().EndsWith(".br48")
+                || fileName.ToLower().EndsWith(".br4") || fileName.ToLower().EndsWith(".br5") || fileName.ToLower().EndsWith(".br67");
         }
 
         public static (string, IDriveType) GetFileNameAndIDriveType(string fileName)
@@ -74,6 +76,9 @@ namespace BMC
 
                 case "br29":
                     return (name, IDriveType.BR29);
+
+                case "br3":
+                    return (name, IDriveType.BR3);
 
                 case "br30":
                     return (name, IDriveType.BR30);
@@ -105,6 +110,9 @@ namespace BMC
                 case IDriveType.BR1:
                 case IDriveType.BR25:
                     return MediaType.AAC;
+
+                case IDriveType.BR3:
+                    return MediaType.M4A;
 
                 case IDriveType.BR27:
                 case IDriveType.BR34:
