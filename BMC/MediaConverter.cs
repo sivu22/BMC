@@ -148,7 +148,7 @@ namespace BMC
             for (int i = 0; i < bytesIn.Length; i++)
             {
                 // Only first 131072 bytes (128KB) are inverted
-                if (type == IDriveType.BR29 || type == IDriveType.BR34 || type == IDriveType.BR48)
+                if (type == IDriveType.BR29 || type == IDriveType.BR27 || type == IDriveType.BR34 || type == IDriveType.BR48)
                 {
                     if (i < 0x20000) bytesOut[i] = (byte)(~bytesIn[i]);
                     else bytesOut[i] = bytesIn[i];
